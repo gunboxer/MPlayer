@@ -19,6 +19,13 @@ USE `mplayerdb`;
 
 --
 -- Table structure for table `media`
+-- `Id` - идентификатор записи
+-- `SongName` - название песни. вводится ручками
+-- `FileName` - наименование файла песни
+-- `SongData` - MD5 сумма от файла песни (если 2 раза пытаться загрузить один файл, то храниться будет один так как хэш совпадет)
+-- `SongSize` - размер файла в Кб
+-- `CreateDate` - дата создания записи
+-- `ChangeDate` - дата изменения записи, обновляется триггером.
 --
 
 DROP TABLE IF EXISTS `media`;
@@ -57,6 +64,9 @@ DELIMITER ;
 
 --
 -- Table structure for table `users`
+-- `UserName` - имя пользователя.
+-- `Password` - MD5 от пароля.
+-- `Administrator` - флаг админа.
 --
 
 DROP TABLE IF EXISTS `users`;
@@ -70,6 +80,7 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+-- Два начальных пользователя, пароль "test" у обоих.
 INSERT INTO USERS (UserName, Password, Administrator) values
 ('User', '74657374', '0'),
 ('Administrator', '74657374', '1');
