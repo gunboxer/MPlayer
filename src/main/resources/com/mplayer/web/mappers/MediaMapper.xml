@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.mplayer.web.mappers.MediaMapper">
+    <insert id="insertMedia" parameterType="Media" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO Media (
+            songName,
+            fileName,
+            songData,
+            songSize
+        )
+        VALUES (
+            #{songName},
+            #{fileName},
+            #{songData},
+            #{songSize}
+        )
+    </insert>
+    
+    <update id="updateMedia" parameterType="Media">
+        UPDATE Media SET
+            songName = #{songName},
+            fileName = #{fileName},
+            songData = #{songData},
+            songSize = #{songSize}
+        WHERE id = #{id}
+    </update>
+    
+    <select id="getMediaCount" parameterType="selectLimitation" resultType="java.lang.Integer">
+        SELECT 
+            COUNT(*)
+        FROM Media WHERE 1=1
+        <if test="search != null and search != '%%'">
+            AND ((songName LIKE #{search})
+            OR (fileName LIKE #{search}))
+        </if>
+        <if test="mediaid != null and mediaid != ''">
+            AND (id = #{mediaid})
+        </if>
+        <if test="songname != null and songname != '%%'">
+            AND (songName LIKE #{songname})
+        </if>
+        <if test="filename != null and filename != '%%'">
+            AND (fileName LIKE #{filename})
+        </if>
+        <if test="minsize != null and minsize != ''">
+            AND (songSize &gt;= #{minsize})
+        </if>
+        <if test="maxsize != null and maxsize != ''">
+            AND (songSize &lt;= #{maxsize})
+        </if>
+        <if test="createdatefrom != null and createdatefrom != ''">
+            AND UNIX_TIMESTAMP(createDate) &gt;= #{createdatefrom})
+        </if>
+        <if test="createdateto != null and createdateto != ''">
+            AND UNIX_TIMESTAMP(createDate) &lt;= #{createdateto})
+        </if>
+        <if test="changedatefrom != null and changedatefrom != ''">
+            AND UNIX_TIMESTAMP(changeDate) &gt;= #{changedatefrom})
+        </if>
+        <if test="changedateto != null and changedateto != ''">
+            AND UNIX_TIMESTAMP(changeDate) &lt;= #{changedateto})
+        </if>
+    </select>
+    
+    <select id="getMediaList" parameterType="SelectLimitation" resultMap="result">
+        SELECT 
+            id, 
+            songName, 
+            fileName, 
+            songSize, 
+            UNIX_TIMESTAMP(createDate) as createDate, 
+            UNIX_TIMESTAMP(changeDate) as changeDate 
+        FROM Media WHERE 1=1
+        <if test="search != null and search != '%%'">
+            AND ((songName LIKE #{search})
+            OR (fileName LIKE #{search}))
+        </if>
+        <if test="mediaid != null and mediaid != ''">
+            AND (id = #{mediaid})
+        </if>
+        <if test="songname != null and songname != '%%'">
+            AND (songName LIKE #{songname})
+        </if>
+        <if test="filename != null and filename != '%%'">
+            AND (fileName LIKE #{filename})
+        </if>
+        <if test="minsize != null and minsize != ''">
+            AND (songSize &gt;= #{minsize})
+        </if>
+        <if test="maxsize != null and maxsize != ''">
+            AND (songSize &lt;= #{maxsize})
+        </if>
+        <if test="createdatefrom != null and createdatefrom != ''">
+            AND UNIX_TIMESTAMP(createDate) &gt;= #{createdatefrom})
+        </if>
+        <if test="createdateto != null and createdateto != ''">
+            AND UNIX_TIMESTAMP(createDate) &lt;= #{createdateto})
+        </if>
+        <if test="changedatefrom != null and changedatefrom != ''">
+            AND UNIX_TIMESTAMP(changeDate) &gt;= #{changedatefrom})
+        </if>
+        <if test="changedateto != null and changedateto != ''">
+            AND UNIX_TIMESTAMP(changeDate) &lt;= #{changedateto})
+        </if>
+        ORDER BY id DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+    
+    <select id="getMediaDetails" parameterType="java.lang.String" resultType="com.mplayer.web.domain.Media">
+        SELECT 
+            id, 
+            songName, 
+            fileName, 
+            songData,
+            songSize, 
+            UNIX_TIMESTAMP(createDate) as createDate, 
+            UNIX_TIMESTAMP(changeDate) as changeDate 
+        FROM Media
+        WHERE id = #{id}
+    </select>
+    
+    <delete id="deleteMedia" parameterType="java.lang.String">
+        DELETE
+        FROM Media
+        WHERE id = #{id}
+    </delete>
+    
+    <select id="isMediaUsed" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT 
+            COUNT(*)
+        FROM Media
+        WHERE HEX(songData) = #{songData}
+        LIMIT 1
+    </select>
+    
+    <select id="getMaxMediaSize" resultType="java.lang.Long">
+        SELECT 
+            MAX(songSize)
+        FROM Media
+    </select>
+    
+    <resultMap id="result" type="com.mplayer.web.domain.Media">
+        <result property="id" column="id"/>
+        <result property="songName" column="songName"/>
+        <result property="fileName" column="fileName"/>
+        <result property="songSize" column="songSize"/>
+        <result property="createDate" column="createDate"/>
+        <result property="changeDate" column="changeDate"/>
+    </resultMap>
+</mapper>

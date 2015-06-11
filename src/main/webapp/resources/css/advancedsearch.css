@@ -1,0 +1,13 @@
+#slider12b .slider-track-low, #slider12c .slider-track-low {
+    background: lightcoral;
+    
+}
+
+#slider12c .slider-selection {
+    background: lightgreen;
+    
+}
+
+#slider12a .slider-track-high, #slider12c .slider-track-high {
+    background: lightcoral;
+}
